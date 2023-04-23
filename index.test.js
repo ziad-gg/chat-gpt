@@ -82,16 +82,11 @@ client.on(Events.ClientReady, async ({user}) => {
 
 
 
-function formatChatResponse(response) {
-  const regex = /javascriptCopy code(.*?)`/s;
-  const match = response.match(regex);
-  let code = null;
-  if (match) {
-    code = match[1].trim();
-    code = code.replace(/\n/g, '');
-    code = `"${code}"`;
-  }
-  const message = response.replace(regex, '');
+function formatResponse(response) {
+  const codeMatch = response.match(/```([\w\s\S]*?)```/);
+  const code = codeMatch ? codeMatch[1].trim() : null;
+  const message = response.replace(/```([\w\s\S]*?)```/g, '').trim();
+  
   return { message, code };
 }
 
@@ -101,7 +96,7 @@ client.on(Events.MessageCreate, async (message) => {
  if (message.author.username.toLowerCase().includes("zia")) {
    const res = await client.sendMessage(message.content);
   //  console.log(res);
-  console.log(formatChatResponse(res))
+  console.log(formatResponse(res))
    message.channel.send({content: res});
  };
 
